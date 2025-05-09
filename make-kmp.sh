@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# make-kmp: Generator Kotlin Multiplatform dari proyek Android
+# make-kmp: Kotlin Multiplatform Generator for Android projects
 #
 # Usage: ./make-kmp.sh [options]
 #
 # Options:
-#   -p, --project     Path ke proyek Android (default: direktori saat ini)
-#   -o, --output      Path output untuk proyek KMP (default: ./kmp-output)
-#   -pkg, --package   Nama package dasar (default: com.example.kmp)
-#   -n, --name        Nama aplikasi (default: KmpApp)
-#   -h, --help        Tampilkan bantuan
-#   -v, --verbose     Mode verbose
+#   -p, --project     Path to Android project (default: current directory)
+#   -o, --output      Output path for KMP project (default: ./kmp-output)
+#   -pkg, --package   Base package name (default: com.example.kmp)
+#   -n, --name        Application name (default: KmpApp)
+#   -h, --help        Show help
+#   -v, --verbose     Verbose mode
 
 # Default values
 PROJECT_PATH="$(pwd)"
@@ -31,22 +31,22 @@ NC='\033[0m' # No Color
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 TEMPLATES_DIR="$SCRIPT_DIR/templates"
 
-# Function untuk menampilkan bantuan
+# Function to display help
 show_help() {
     echo "Usage: ./make-kmp.sh [options]"
     echo ""
     echo "Options:"
-    echo "  -p, --project     Path ke proyek Android (default: direktori saat ini)"
-    echo "  -o, --output      Path output untuk proyek KMP (default: ./kmp-output)"
-    echo "  -pkg, --package   Nama package dasar (default: com.example.kmp)"
-    echo "  -n, --name        Nama aplikasi (default: KmpApp)"
-    echo "  -h, --help        Tampilkan bantuan"
-    echo "  -v, --verbose     Mode verbose"
-    echo "  -s, --simulation  Jalankan dalam mode simulasi (abaikan validasi proyek Android)"
+    echo "  -p, --project     Path to Android project (default: current directory)"
+    echo "  -o, --output      Output path for KMP project (default: ./kmp-output)"
+    echo "  -pkg, --package   Base package name (default: com.example.kmp)"
+    echo "  -n, --name        Application name (default: KmpApp)"
+    echo "  -h, --help        Show help"
+    echo "  -v, --verbose     Verbose mode"
+    echo "  -s, --simulation  Run in simulation mode (skip Android project validation)"
     exit 0
 }
 
-# Function untuk log
+# Logging function
 log() {
     if [ "$VERBOSE" = true ] || [ "$2" = "error" ] || [ "$2" = "success" ]; then
         local timestamp=$(date +"%H:%M:%S")
@@ -70,7 +70,7 @@ log() {
     fi
 }
 
-# Validasi proyek Android
+# Validate Android project
 validate_project() {
     if [ "$SIMULATION_MODE" = true ]; then
         log "Running in simulation mode, skipping Android project validation" "warning"
@@ -136,19 +136,19 @@ create_project_structure() {
     mkdir -p "$OUTPUT_PATH/shared/src/commonMain/kotlin/$PACKAGE_PATH/domain"
     mkdir -p "$OUTPUT_PATH/shared/src/commonMain/kotlin/$PACKAGE_PATH/model"
     mkdir -p "$OUTPUT_PATH/shared/src/commonMain/kotlin/$PACKAGE_PATH/repository"
-    mkdir -p "$OUTPUT_PATH/shared/src/commonMain/kotlin/$PACKAGE_PATH/di"  # Add DI directory
+    mkdir -p "$OUTPUT_PATH/shared/src/commonMain/kotlin/$PACKAGE_PATH/di"
     mkdir -p "$OUTPUT_PATH/shared/src/androidMain/kotlin/$PACKAGE_PATH"
-    mkdir -p "$OUTPUT_PATH/shared/src/androidMain/kotlin/$PACKAGE_PATH/di"  # Add DI directory for Android
+    mkdir -p "$OUTPUT_PATH/shared/src/androidMain/kotlin/$PACKAGE_PATH/di"
     mkdir -p "$OUTPUT_PATH/shared/src/iosMain/kotlin/$PACKAGE_PATH"
-    mkdir -p "$OUTPUT_PATH/shared/src/iosMain/kotlin/$PACKAGE_PATH/di"  # Add DI directory for iOS
+    mkdir -p "$OUTPUT_PATH/shared/src/iosMain/kotlin/$PACKAGE_PATH/di"
 
     # Create Android app directories
-    mkdir -p "$OUTPUT_PATH/androidApp/src/main/kotlin/app"  # Add app directory for Application class
+    mkdir -p "$OUTPUT_PATH/androidApp/src/main/kotlin/app"
 
     log "Basic project structure created" "success"
 }
 
-# Create templates directory if not exists
+# Verify templates directory exists
 create_templates_dir() {
     if [ ! -d "$TEMPLATES_DIR" ]; then
         log "Templates directory not found: $TEMPLATES_DIR" "error"
@@ -203,7 +203,7 @@ copy_and_process_templates() {
         fi
     done
 
-    # Special processing for iOS project.pbxproj - it's a text file but some utilities might not detect it
+    # Special processing for iOS project.pbxproj
     if [ -f "$OUTPUT_PATH/iosApp/iosApp.xcodeproj/project.pbxproj" ]; then
         sed -i.bak "s/{{APP_NAME}}/$APP_NAME/g" "$OUTPUT_PATH/iosApp/iosApp.xcodeproj/project.pbxproj"
         sed -i.bak "s/{{PACKAGE_NAME}}/$PACKAGE_NAME/g" "$OUTPUT_PATH/iosApp/iosApp.xcodeproj/project.pbxproj"
