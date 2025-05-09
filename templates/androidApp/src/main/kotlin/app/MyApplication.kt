@@ -12,13 +12,10 @@ class MyApplication : Application() {
         super.onCreate()
         
         // Initialize Koin
-        startKoin {
-            androidLogger(if (BuildConfig.DEBUG) Level.ERROR else Level.NONE)
+        KoinDI.init {
+            androidLogger(Level.ERROR)
             androidContext(this@MyApplication)
             modules(appModule)
         }
-        
-        // Initialize common Koin modules
-        KoinDI.init()
     }
 }

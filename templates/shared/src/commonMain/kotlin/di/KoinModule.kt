@@ -5,25 +5,27 @@ import {{PACKAGE_NAME}}.repository.SampleRepositoryImpl
 import {{PACKAGE_NAME}}.domain.*
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
+import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
 /**
  * Setup Koin DI untuk seluruh aplikasi.
  */
 object KoinDI {
-    fun init() {
+    fun init(appDeclaration: KoinAppDeclaration = {}) {
         startKoin {
+            appDeclaration()
             modules(commonModule, platformModule())
         }
     }
-    
+
     /**
      * Modul untuk dependensi yang umum untuk semua platform
      */
     private val commonModule = module {
         // Repositories
         single<SampleRepository> { SampleRepositoryImpl() }
-        
+
         // Use Cases
         factory { GetSamplesUseCase(get()) }
         factory { GetSampleByIdUseCase(get()) }
