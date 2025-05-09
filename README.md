@@ -184,12 +184,4 @@ Contributions are welcome! To contribute:
 4. Push to the branch: `git push origin feature/amazing-feature`
 5. Open a Pull Request
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Inspiration
-
-This project is inspired by **to-kmp**, another Kotlin Multiplatform project generator.
-
 Yuk Ngopi ☕️🥩.
