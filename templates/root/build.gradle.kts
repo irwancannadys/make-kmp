@@ -15,3 +15,18 @@ plugins {
 tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
 }
+
+// KtLint configuration
+buildscript {
+    repositories {
+        maven("https://plugins.gradle.org/m2/")
+    }
+    dependencies {
+        classpath("org.jlleitschuh.gradle:ktlint-gradle:11.5.1")
+    }
+}
+
+// Apply KtLint plugin to all subprojects
+subprojects {
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+}

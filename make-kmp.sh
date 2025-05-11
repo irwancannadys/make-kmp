@@ -169,6 +169,20 @@ copy_and_process_templates() {
     if [ -d "$TEMPLATES_DIR/root" ]; then
         cp -r "$TEMPLATES_DIR/root/"* "$OUTPUT_PATH/"
         log "Copied root templates" "info"
+
+        # Check if GitHub Actions workflows exist and copy them
+        if [ -d "$TEMPLATES_DIR/root/.github/workflows" ]; then
+            mkdir -p "$OUTPUT_PATH/.github/workflows"
+            cp -r "$TEMPLATES_DIR/root/.github/workflows/"* "$OUTPUT_PATH/.github/workflows/"
+            log "Copied GitHub Actions workflows" "info"
+        fi
+
+        # Check if other GitHub configs exist and copy them
+        if [ -f "$TEMPLATES_DIR/root/.github/CODEOWNERS" ]; then
+            mkdir -p "$OUTPUT_PATH/.github"
+            cp "$TEMPLATES_DIR/root/.github/CODEOWNERS" "$OUTPUT_PATH/.github/"
+            log "Copied GitHub CODEOWNERS file" "info"
+        fi
     fi
 
     # Copy shared module template files
@@ -203,7 +217,22 @@ copy_and_process_templates() {
         fi
     done
 
-    # Special processing for iOS project.pbxproj
+    # Special processing for GitHub workflow files which are in a hidden directory
+    if [ -d "$OUTPUT_PATH/.github/workflows" ]; then
+        find "$OUTPUT_PATH/.github" -type f | while read file; do
+            if file "$file" | grep -q "text"; then
+                sed -i.bak "s/{{APP_NAME}}/$APP_NAME/g" "$file"
+                sed -i.bak "s/{{PACKAGE_NAME}}/$PACKAGE_NAME/g" "$file"
+                sed -i.bak "s/{{PACKAGE_PATH}}/$PACKAGE_PATH/g" "$file"
+                # Optional: Replace GitHub username placeholder if needed
+                # sed -i.bak "s/{{GITHUB_USERNAME}}/yourusername/g" "$file"
+                rm -f "${file}.bak"
+            fi
+        done
+        log "Processed GitHub workflow files" "info"
+    fi
+
+    # Special processing for iOS project.pbxproj - it's a text file but some utilities might not detect it
     if [ -f "$OUTPUT_PATH/iosApp/iosApp.xcodeproj/project.pbxproj" ]; then
         sed -i.bak "s/{{APP_NAME}}/$APP_NAME/g" "$OUTPUT_PATH/iosApp/iosApp.xcodeproj/project.pbxproj"
         sed -i.bak "s/{{PACKAGE_NAME}}/$PACKAGE_NAME/g" "$OUTPUT_PATH/iosApp/iosApp.xcodeproj/project.pbxproj"
