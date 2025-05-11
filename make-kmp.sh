@@ -137,6 +137,7 @@ create_project_structure() {
     mkdir -p "$OUTPUT_PATH/shared/src/commonMain/kotlin/$PACKAGE_PATH/model"
     mkdir -p "$OUTPUT_PATH/shared/src/commonMain/kotlin/$PACKAGE_PATH/repository"
     mkdir -p "$OUTPUT_PATH/shared/src/commonMain/kotlin/$PACKAGE_PATH/di"
+    mkdir -p "$OUTPUT_PATH/shared/src/commonMain/kotlin/$PACKAGE_PATH/network"
     mkdir -p "$OUTPUT_PATH/shared/src/androidMain/kotlin/$PACKAGE_PATH"
     mkdir -p "$OUTPUT_PATH/shared/src/androidMain/kotlin/$PACKAGE_PATH/di"
     mkdir -p "$OUTPUT_PATH/shared/src/iosMain/kotlin/$PACKAGE_PATH"
@@ -256,6 +257,22 @@ copy_and_process_templates() {
         log "Moved SampleRepository.kt to package directory" "info"
     fi
 
+    # Move network files to correct package structure
+    if [ -f "$OUTPUT_PATH/shared/src/commonMain/kotlin/network/ApiClient.kt" ]; then
+        mv "$OUTPUT_PATH/shared/src/commonMain/kotlin/network/ApiClient.kt" "$OUTPUT_PATH/shared/src/commonMain/kotlin/$PACKAGE_PATH/network/"
+        log "Moved ApiClient.kt to package directory" "info"
+    fi
+
+    if [ -f "$OUTPUT_PATH/shared/src/commonMain/kotlin/network/ApiResponse.kt" ]; then
+        mv "$OUTPUT_PATH/shared/src/commonMain/kotlin/network/ApiResponse.kt" "$OUTPUT_PATH/shared/src/commonMain/kotlin/$PACKAGE_PATH/network/"
+        log "Moved ApiResponse.kt to package directory" "info"
+    fi
+
+    if [ -f "$OUTPUT_PATH/shared/src/commonMain/kotlin/network/SampleApiService.kt" ]; then
+        mv "$OUTPUT_PATH/shared/src/commonMain/kotlin/network/SampleApiService.kt" "$OUTPUT_PATH/shared/src/commonMain/kotlin/$PACKAGE_PATH/network/"
+        log "Moved SampleApiService.kt to package directory" "info"
+    fi
+
     # Move other shared files if they exist outside package structure
     if [ -f "$OUTPUT_PATH/shared/src/commonMain/kotlin/Greeting.kt" ]; then
         mv "$OUTPUT_PATH/shared/src/commonMain/kotlin/Greeting.kt" "$OUTPUT_PATH/shared/src/commonMain/kotlin/$PACKAGE_PATH/"
@@ -265,6 +282,22 @@ copy_and_process_templates() {
     if [ -f "$OUTPUT_PATH/shared/src/commonMain/kotlin/Platform.kt" ]; then
         mv "$OUTPUT_PATH/shared/src/commonMain/kotlin/Platform.kt" "$OUTPUT_PATH/shared/src/commonMain/kotlin/$PACKAGE_PATH/"
         log "Moved Platform.kt to package directory" "info"
+    fi
+
+    # Move DI files to correct package structure
+    if [ -f "$OUTPUT_PATH/shared/src/commonMain/kotlin/di/KoinModule.kt" ]; then
+        mv "$OUTPUT_PATH/shared/src/commonMain/kotlin/di/KoinModule.kt" "$OUTPUT_PATH/shared/src/commonMain/kotlin/$PACKAGE_PATH/di/"
+        log "Moved KoinModule.kt to package directory" "info"
+    fi
+
+    if [ -f "$OUTPUT_PATH/shared/src/androidMain/kotlin/di/PlatformModule.kt" ]; then
+        mv "$OUTPUT_PATH/shared/src/androidMain/kotlin/di/PlatformModule.kt" "$OUTPUT_PATH/shared/src/androidMain/kotlin/$PACKAGE_PATH/di/"
+        log "Moved Android PlatformModule.kt to package directory" "info"
+    fi
+
+    if [ -f "$OUTPUT_PATH/shared/src/iosMain/kotlin/di/PlatformModule.kt" ]; then
+        mv "$OUTPUT_PATH/shared/src/iosMain/kotlin/di/PlatformModule.kt" "$OUTPUT_PATH/shared/src/iosMain/kotlin/$PACKAGE_PATH/di/"
+        log "Moved iOS PlatformModule.kt to package directory" "info"
     fi
 
     # Clean up empty directories that might be left
@@ -283,20 +316,9 @@ copy_and_process_templates() {
         log "Removed empty repository directory" "info"
     fi
 
-    # Move DI files to correct package structure
-    if [ -f "$OUTPUT_PATH/shared/src/commonMain/kotlin/di/KoinModule.kt" ]; then
-        mv "$OUTPUT_PATH/shared/src/commonMain/kotlin/di/KoinModule.kt" "$OUTPUT_PATH/shared/src/commonMain/kotlin/$PACKAGE_PATH/di/"
-        log "Moved KoinModule.kt to package directory" "info"
-    fi
-
-    if [ -f "$OUTPUT_PATH/shared/src/androidMain/kotlin/di/PlatformModule.kt" ]; then
-        mv "$OUTPUT_PATH/shared/src/androidMain/kotlin/di/PlatformModule.kt" "$OUTPUT_PATH/shared/src/androidMain/kotlin/$PACKAGE_PATH/di/"
-        log "Moved Android PlatformModule.kt to package directory" "info"
-    fi
-
-    if [ -f "$OUTPUT_PATH/shared/src/iosMain/kotlin/di/PlatformModule.kt" ]; then
-        mv "$OUTPUT_PATH/shared/src/iosMain/kotlin/di/PlatformModule.kt" "$OUTPUT_PATH/shared/src/iosMain/kotlin/$PACKAGE_PATH/di/"
-        log "Moved iOS PlatformModule.kt to package directory" "info"
+    if [ -d "$OUTPUT_PATH/shared/src/commonMain/kotlin/network" ] && [ -z "$(ls -A "$OUTPUT_PATH/shared/src/commonMain/kotlin/network")" ]; then
+        rmdir "$OUTPUT_PATH/shared/src/commonMain/kotlin/network"
+        log "Removed empty network directory" "info"
     fi
 
     # Clean up empty di directories

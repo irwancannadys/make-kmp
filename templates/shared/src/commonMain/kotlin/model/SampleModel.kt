@@ -3,7 +3,7 @@ package {{PACKAGE_NAME}}.model
 import kotlinx.serialization.Serializable
 
 /**
- * Contoh model data yang digunakan di seluruh aplikasi.
+ * Example model class.
  */
 @Serializable
 data class SampleModel(

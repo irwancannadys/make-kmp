@@ -3,6 +3,8 @@ package {{PACKAGE_NAME}}.di
 import {{PACKAGE_NAME}}.repository.SampleRepository
 import {{PACKAGE_NAME}}.repository.SampleRepositoryImpl
 import {{PACKAGE_NAME}}.domain.*
+import {{PACKAGE_NAME}}.network.ApiClient
+import {{PACKAGE_NAME}}.network.SampleApiService
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.dsl.KoinAppDeclaration
@@ -18,14 +20,18 @@ object KoinDI {
             modules(commonModule, platformModule())
         }
     }
-
+    
     /**
-     * Modul untuk dependensi yang umum untuk semua platform
+     * Module for common dependencies across all platforms
      */
     private val commonModule = module {
+        // Network
+        single { ApiClient() }
+        single { SampleApiService(get()) }
+        
         // Repositories
         single<SampleRepository> { SampleRepositoryImpl() }
-
+        
         // Use Cases
         factory { GetSamplesUseCase(get()) }
         factory { GetSampleByIdUseCase(get()) }
@@ -36,6 +42,6 @@ object KoinDI {
 }
 
 /**
- * Modul spesifik untuk masing-masing platform
+ * Platform-specific module for each platform
  */
 expect fun platformModule(): Module
